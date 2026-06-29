@@ -1,0 +1,24 @@
+# Integración con Google Calendar
+
+## Objetivo
+
+Permitir que la aplicación lea eventos desde Google Calendar y los convierta en bloques visuales de la timeline.
+
+## Flujo propuesto
+
+1. El usuario inicia el flujo de autenticación con Google.
+2. La app obtiene permisos de lectura del calendario.
+3. El backend recupera eventos del calendario configurado.
+4. Los eventos se normalizan a categorías visuales como dormir, comer, cole, baño o juego.
+5. La timeline se actualiza con esos bloques.
+
+## Variables de entorno esperadas
+
+- GOOGLE_CLIENT_ID
+- GOOGLE_CLIENT_SECRET
+- GOOGLE_REDIRECT_URI
+- GOOGLE_SCOPES
+
+## Primer paso del MVP
+
+Implementar un endpoint que devuelva eventos de ejemplo y preparar la estructura para reemplazarlo por datos reales desde la API de Google.

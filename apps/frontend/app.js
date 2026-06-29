@@ -1,4 +1,4 @@
-const familyMembers = [
+const fallbackFamilyMembers = [
   { name: 'Mamá', color: '#6ad8ff', activities: [
     { start: 6.5, end: 7.2, label: 'Dormir', icon: '🛏️', type: 'sleep' },
     { start: 7.2, end: 8.0, label: 'Desayuno', icon: '🍽️', type: 'eat' },
@@ -36,6 +36,8 @@ const familyMembers = [
   ]}
 ];
 
+let familyMembers = [...fallbackFamilyMembers];
+
 const startHour = 6;
 const endHour = 20;
 const visibleHours = endHour - startHour;
@@ -47,6 +49,8 @@ const currentDescription = document.getElementById('current-description');
 const nextTitle = document.getElementById('next-title');
 const freeTime = document.getElementById('free-time');
 const modeToggle = document.getElementById('mode-toggle');
+const daySelector = document.getElementById('day-selector');
+const timeRemaining = document.getElementById('time-remaining');
 
 function makeTimeAxis() {
   timeAxis.innerHTML = '';
@@ -62,9 +66,40 @@ function getCurrentHour() {
   return now.getHours() + now.getMinutes() / 60;
 }
 
-function renderRows() {
+function getSelectedDayOffset() {
+  return daySelector.value === 'tomorrow' ? 1 : 0;
+}
+
+async function loadTimeline() {
+  try {
+    const response = await fetch('http://127.0.0.1:8001/timeline');
+    if (!response.ok) throw new Error('No se pudo cargar la timeline');
+    const data = await response.json();
+
+    if (Array.isArray(data.members)) {
+      familyMembers = data.members.map((member) => ({
+        ...member,
+        activities: member.activities || [],
+      }));
+    }
+  } catch (error) {
+    familyMembers = [...fallbackFamilyMembers];
+  }
+}
+
+async function renderRows() {
   rows.innerHTML = '';
   const now = getCurrentHour();
+  const selectedDayOffset = getSelectedDayOffset();
+
+  if (selectedDayOffset !== 0) {
+    currentDescription.textContent = 'Vista de mañana preparada para la siguiente iteración.';
+    currentTitle.textContent = '🗓️ Mañana';
+    nextTitle.textContent = '—';
+    freeTime.textContent = '—';
+    timeRemaining.textContent = 'Tiempo restante: pendiente de sincronizar';
+    return;
+  }
 
   familyMembers.forEach((member) => {
     const row = document.createElement('div');
@@ -101,11 +136,13 @@ function renderRows() {
   const currentActivity = familyMembers[2].activities[activeIndex] || familyMembers[2].activities[0];
   const nextActivity = familyMembers[2].activities[activeIndex + 1] || familyMembers[2].activities[0];
   const freeMinutes = Math.max(0, Math.round((nextActivity.start - now) * 60));
+  const remainingMinutes = Math.max(0, Math.round((currentActivity.end - now) * 60));
 
   currentTitle.textContent = `${currentActivity.icon} ${currentActivity.label}`;
   currentDescription.textContent = `Ahora mismo la familia está en ${currentActivity.label.toLowerCase()} y el tiempo sigue avanzando.`;
   nextTitle.textContent = `${nextActivity.icon} ${nextActivity.label}`;
   freeTime.textContent = `${freeMinutes} min`;
+  timeRemaining.textContent = `Tiempo restante: ${remainingMinutes} min`;
 }
 
 function placeNowCursor() {
@@ -121,9 +158,13 @@ function toggleKidsMode() {
 }
 
 makeTimeAxis();
-renderRows();
-placeNowCursor();
+(async () => {
+  await loadTimeline();
+  await renderRows();
+  placeNowCursor();
+})();
 modeToggle.addEventListener('click', toggleKidsMode);
+daySelector.addEventListener('change', renderRows);
 setInterval(() => {
   renderRows();
   placeNowCursor();

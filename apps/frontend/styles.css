@@ -70,6 +70,13 @@ h1, h2, p { margin: 0; }
 
 .pill-button.neutral {
   background: rgba(255,255,255,0.1);
+  color: var(--text);
+  border: 1px solid rgba(255,255,255,0.12);
+}
+
+select.pill-button {
+  appearance: none;
+  cursor: pointer;
 }
 
 .timeline-area {
@@ -195,6 +202,12 @@ h1, h2, p { margin: 0; }
 .summary-meta {
   display: flex;
   gap: 24px;
+}
+
+.summary-note {
+  margin-top: 8px;
+  color: var(--muted);
+  font-size: 0.95rem;
 }
 
 @media (max-width: 900px) {

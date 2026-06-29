@@ -8,6 +8,7 @@ Family Timer es una propuesta de producto para ayudar a las familias a entender 
 - Documentación de alcance, flujos y arquitectura.
 - Un prototipo visual de interfaz tablet-first con timeline familiar, línea de "ahora" y modo infantil.
 - Un sistema mínimo de Docker Compose para correr el frontend y el backend en local.
+- Un backlog y estado de trabajo documentados en docs/product/todo.md.
 
 ## Estructura del repositorio
 

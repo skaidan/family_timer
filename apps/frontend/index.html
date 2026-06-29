@@ -14,8 +14,11 @@
           <h1>Family Timer</h1>
         </div>
         <div class="topbar-actions">
+          <select id="day-selector" class="pill-button neutral">
+            <option value="today">Hoy</option>
+            <option value="tomorrow">Mañana</option>
+          </select>
           <button id="mode-toggle" class="pill-button">Modo niños</button>
-          <button class="pill-button neutral">Hoy</button>
         </div>
       </header>
 
@@ -32,6 +35,7 @@
           <p class="eyebrow">Ahora</p>
           <h2 id="current-title">Cargando...</h2>
           <p id="current-description">Preparando la vista visual del día.</p>
+          <p id="time-remaining" class="summary-note">Tiempo restante: --</p>
         </div>
         <div class="summary-meta">
           <div>
