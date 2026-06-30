@@ -1,6 +1,6 @@
 from fastapi import APIRouter, Query
 
-from app.services.timeline_service import TimelineService
+from ...services.timeline_service import TimelineService
 
 router = APIRouter(prefix="/timeline", tags=["timeline"])
 service = TimelineService()

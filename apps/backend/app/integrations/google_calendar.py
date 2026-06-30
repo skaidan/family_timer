@@ -89,6 +89,7 @@ class GoogleCalendarClient:
 
         return {
             "summary": raw_event.get("summary", "Evento"),
+            "label": raw_event.get("summary", "Evento"),
             "start": start,
             "end": end,
             "location": raw_event.get("location"),

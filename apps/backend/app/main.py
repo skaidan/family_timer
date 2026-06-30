@@ -2,8 +2,8 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 import os
 
-from app.api.v1.google_calendar import router as google_calendar_router
-from app.api.v1.timeline import router as timeline_router
+from .api.v1.google_calendar import router as google_calendar_router
+from .api.v1.timeline import router as timeline_router
 
 app = FastAPI(title="Family Timer API")
 

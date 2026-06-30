@@ -54,7 +54,7 @@ const timeRemaining = document.getElementById('time-remaining');
 const googleAuthButton = document.getElementById('google-auth-button');
 const googleSyncStatus = document.getElementById('google-sync-status');
 
-const backendBase = 'http://127.0.0.1:8001';
+const backendBase = `${window.location.protocol}//${window.location.hostname}:8001`;
 const googleApiBase = `${backendBase}/google-calendar`;
 let googleAccessToken = localStorage.getItem('family_timer_google_token');
 
@@ -90,14 +90,21 @@ function getTimelineMembers() {
 async function connectGoogleCalendar() {
   try {
     const response = await fetch(`${googleApiBase}/auth-url`);
-    if (!response.ok) throw new Error('No se pudo obtener la URL de autorización.');
-
     const data = await response.json();
+
+    if (!response.ok) {
+      const message = data.detail || 'No se pudo obtener la URL de autorización.';
+      updateGoogleStatus(message);
+      return;
+    }
+
     if (data.auth_url) {
       window.location.href = data.auth_url;
-    } else {
-      throw new Error('La URL de autorización no está disponible.');
+      return;
     }
+
+    const message = data.error || 'La URL de autorización no está disponible.';
+    updateGoogleStatus(message);
   } catch (error) {
     updateGoogleStatus('Error al iniciar conexión con Google Calendar');
     console.error(error);

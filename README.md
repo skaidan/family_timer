@@ -19,7 +19,14 @@ Family Timer es una propuesta de producto para ayudar a las familias a entender 
 
 ## Cómo arrancarlo con Docker
 
-1. Desde la raíz del proyecto:
+1. Crea un archivo `.env` en la raíz del proyecto con los valores de Google Calendar. Usa `.env.example` como referencia.
+
+```bash
+cp .env.example .env
+# editar .env y completar las variables de Google
+```
+
+2. Desde la raíz del proyecto:
 
 ```bash
 docker compose up --build

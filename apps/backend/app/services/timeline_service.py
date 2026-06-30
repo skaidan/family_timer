@@ -1,8 +1,8 @@
 from typing import Any
 
-from app.integrations.google_calendar import GoogleCalendarClient
-from app.services.activity_normalizer import ActivityNormalizer
-from app.services.visualization_rules import VisualizationRules
+from ..integrations.google_calendar import GoogleCalendarClient
+from .activity_normalizer import ActivityNormalizer
+from .visualization_rules import VisualizationRules
 
 
 class TimelineService:
@@ -109,7 +109,7 @@ class TimelineService:
     def _normalize_text(self, value: str) -> str:
         translation = str.maketrans(
             "áéíóúüñÀÁÉÍÓÚÜÑ",
-            "aeiouunAEIOUUN",
+            "aeiouunAAEIOUUN",
         )
         return value.lower().translate(translation)
 

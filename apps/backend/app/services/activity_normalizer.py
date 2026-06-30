@@ -37,9 +37,11 @@ class ActivityNormalizer:
     def normalize(self, raw_activity: dict[str, Any]) -> dict[str, Any]:
         summary = str(raw_activity.get("summary", "")).strip().lower()
         preferred_type = str(raw_activity.get("type", "")).strip().lower()
-        category = self.CATEGORY_MAP.get(summary)
-        if category is None:
+        category = None
+        if preferred_type:
             category = self.CATEGORY_MAP.get(preferred_type)
+        if category is None:
+            category = self.CATEGORY_MAP.get(summary)
         if category is None:
             for term, value in self.CATEGORY_MAP.items():
                 if term in summary:

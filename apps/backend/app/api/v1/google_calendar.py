@@ -1,18 +1,30 @@
 from fastapi import APIRouter, Body, HTTPException, Query
 
-from app.integrations.google_calendar import GoogleCalendarClient
+from ...integrations.google_calendar import GoogleCalendarClient
 
 router = APIRouter(prefix="/google-calendar", tags=["google-calendar"])
-client = GoogleCalendarClient()
 
 
 @router.get("/auth-url")
 def get_auth_url() -> dict[str, str]:
-    return {"auth_url": client.get_auth_url()}
+    client = GoogleCalendarClient()
+    auth_url = client.get_auth_url()
+    if not auth_url:
+        raise HTTPException(
+            status_code=503,
+            detail="Google Calendar no está configurado. Define GOOGLE_CLIENT_ID y GOOGLE_REDIRECT_URI.",
+        )
+    return {"auth_url": auth_url}
 
 
 @router.post("/token")
 def exchange_token(code: str = Body(..., embed=True)) -> dict[str, object]:
+    client = GoogleCalendarClient()
+    if not client.client_id or not client.client_secret or not client.redirect_uri:
+        raise HTTPException(
+            status_code=503,
+            detail="Google Calendar no está configurado. Define GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET y GOOGLE_REDIRECT_URI.",
+        )
     try:
         token_data = client.exchange_code(code)
     except Exception as exc:
@@ -22,5 +34,6 @@ def exchange_token(code: str = Body(..., embed=True)) -> dict[str, object]:
 
 @router.get("/events")
 def get_events(access_token: str = Query(...)) -> dict[str, object]:
+    client = GoogleCalendarClient()
     events = client.fetch_events(access_token)
     return {"events": events}
