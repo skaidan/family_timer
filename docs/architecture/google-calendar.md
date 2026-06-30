@@ -22,3 +22,9 @@ Permitir que la aplicación lea eventos desde Google Calendar y los convierta en
 ## Primer paso del MVP
 
 Implementar un endpoint que devuelva eventos de ejemplo y preparar la estructura para reemplazarlo por datos reales desde la API de Google.
+
+## Endpoints clave
+
+- `GET /google-calendar/auth-url`: devuelve la URL de autorización de Google.
+- `POST /google-calendar/token`: intercambia el código de autorización por tokens OAuth.
+- `GET /google-calendar/events`: recupera eventos reales del calendario usando `access_token`.

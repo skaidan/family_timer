@@ -51,6 +51,87 @@ const freeTime = document.getElementById('free-time');
 const modeToggle = document.getElementById('mode-toggle');
 const daySelector = document.getElementById('day-selector');
 const timeRemaining = document.getElementById('time-remaining');
+const googleAuthButton = document.getElementById('google-auth-button');
+const googleSyncStatus = document.getElementById('google-sync-status');
+
+const backendBase = 'http://127.0.0.1:8001';
+const googleApiBase = `${backendBase}/google-calendar`;
+let googleAccessToken = localStorage.getItem('family_timer_google_token');
+
+function getQueryParams() {
+  return Object.fromEntries(new URLSearchParams(window.location.search));
+}
+
+function setGoogleAccessToken(token) {
+  googleAccessToken = token;
+  if (token) {
+    localStorage.setItem('family_timer_google_token', token);
+  } else {
+    localStorage.removeItem('family_timer_google_token');
+  }
+}
+
+function updateGoogleStatus(message) {
+  if (googleSyncStatus) {
+    googleSyncStatus.textContent = message;
+  }
+}
+
+function updateGoogleButton() {
+  if (googleAuthButton) {
+    googleAuthButton.textContent = googleAccessToken ? 'Google Calendar conectado' : 'Conectar Google Calendar';
+  }
+}
+
+function getTimelineMembers() {
+  return [...familyMembers];
+}
+
+async function connectGoogleCalendar() {
+  try {
+    const response = await fetch(`${googleApiBase}/auth-url`);
+    if (!response.ok) throw new Error('No se pudo obtener la URL de autorización.');
+
+    const data = await response.json();
+    if (data.auth_url) {
+      window.location.href = data.auth_url;
+    } else {
+      throw new Error('La URL de autorización no está disponible.');
+    }
+  } catch (error) {
+    updateGoogleStatus('Error al iniciar conexión con Google Calendar');
+    console.error(error);
+  }
+}
+
+async function exchangeCode(code) {
+  try {
+    const response = await fetch(`${googleApiBase}/token`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ code }),
+    });
+
+    if (!response.ok) {
+      throw new Error('Falló el intercambio de código OAuth.');
+    }
+
+    const data = await response.json();
+    if (data.access_token) {
+      setGoogleAccessToken(data.access_token);
+      updateGoogleStatus('Google Calendar conectado');
+      updateGoogleButton();
+      await loadTimeline();
+      await renderRows();
+    } else {
+      throw new Error('No se recibió access_token de Google.');
+    }
+  } catch (error) {
+    setGoogleAccessToken(null);
+    updateGoogleStatus('Error al intercambiar el código de Google.');
+    console.error(error);
+  }
+}
 
 function makeTimeAxis() {
   timeAxis.innerHTML = '';
@@ -72,7 +153,9 @@ function getSelectedDayOffset() {
 
 async function loadTimeline() {
   try {
-    const response = await fetch('http://127.0.0.1:8001/timeline');
+    const token = googleAccessToken || localStorage.getItem('family_timer_google_token');
+    const query = token ? `?google_access_token=${encodeURIComponent(token)}` : '';
+    const response = await fetch(`${backendBase}/timeline${query}`);
     if (!response.ok) throw new Error('No se pudo cargar la timeline');
     const data = await response.json();
 
@@ -101,7 +184,9 @@ async function renderRows() {
     return;
   }
 
-  familyMembers.forEach((member) => {
+  const timelineMembers = getTimelineMembers();
+
+  timelineMembers.forEach((member) => {
     const row = document.createElement('div');
     row.className = 'row';
 
@@ -132,9 +217,10 @@ async function renderRows() {
     rows.appendChild(row);
   });
 
-  const activeIndex = familyMembers[2].activities.findIndex((activity) => activity.start <= now && now < activity.end);
-  const currentActivity = familyMembers[2].activities[activeIndex] || familyMembers[2].activities[0];
-  const nextActivity = familyMembers[2].activities[activeIndex + 1] || familyMembers[2].activities[0];
+  const primaryMember = timelineMembers[0] || { activities: [] };
+  const activeIndex = primaryMember.activities.findIndex((activity) => activity.start <= now && now < activity.end);
+  const currentActivity = primaryMember.activities[activeIndex] || primaryMember.activities[0] || { icon: '⏳', label: 'Sin actividad', start: now, end: now };
+  const nextActivity = primaryMember.activities[activeIndex + 1] || primaryMember.activities[0] || currentActivity;
   const freeMinutes = Math.max(0, Math.round((nextActivity.start - now) * 60));
   const remainingMinutes = Math.max(0, Math.round((currentActivity.end - now) * 60));
 
@@ -159,10 +245,25 @@ function toggleKidsMode() {
 
 makeTimeAxis();
 (async () => {
+  const params = getQueryParams();
+  if (params.code) {
+    await exchangeCode(params.code);
+    const cleanUrl = window.location.origin + window.location.pathname;
+    window.history.replaceState({}, document.title, cleanUrl);
+  } else {
+    updateGoogleStatus(googleAccessToken ? 'Google Calendar conectado' : 'Sin conexión a Google Calendar');
+  }
+
+  updateGoogleButton();
   await loadTimeline();
   await renderRows();
   placeNowCursor();
 })();
+
+if (googleAuthButton) {
+  googleAuthButton.addEventListener('click', connectGoogleCalendar);
+}
+
 modeToggle.addEventListener('click', toggleKidsMode);
 daySelector.addEventListener('change', renderRows);
 setInterval(() => {

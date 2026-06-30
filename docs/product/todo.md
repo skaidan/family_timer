@@ -18,7 +18,7 @@ Family Timer ya cuenta con una base funcional para mostrar una línea de tiempo 
 
 ## 🔄 En progreso
 
-- Integración con Google Calendar usando un flujo preparado, pero aún sin sincronización real.
+- Integración de backend con Google Calendar para recuperar eventos reales usando access token.
 - Afinado visual de la experiencia infantil y del modo padres.
 
 ## ⏳ Pendiente

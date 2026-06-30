@@ -1,4 +1,4 @@
-from fastapi import APIRouter
+from fastapi import APIRouter, Query
 
 from app.services.timeline_service import TimelineService
 
@@ -7,5 +7,5 @@ service = TimelineService()
 
 
 @router.get("")
-def get_timeline() -> dict[str, object]:
-    return service.build_timeline_by_member()
+def get_timeline(google_access_token: str | None = Query(None)) -> dict[str, object]:
+    return service.build_timeline_by_member(google_access_token)

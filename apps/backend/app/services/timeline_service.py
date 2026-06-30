@@ -1,5 +1,6 @@
 from typing import Any
 
+from app.integrations.google_calendar import GoogleCalendarClient
 from app.services.activity_normalizer import ActivityNormalizer
 from app.services.visualization_rules import VisualizationRules
 
@@ -8,8 +9,9 @@ class TimelineService:
     def __init__(self) -> None:
         self.normalizer = ActivityNormalizer()
         self.visualization_rules = VisualizationRules()
+        self.google_client = GoogleCalendarClient()
 
-    def build_timeline_by_member(self) -> dict[str, Any]:
+    def build_timeline_by_member(self, google_access_token: str | None = None) -> dict[str, Any]:
         members = [
             {
                 "name": "Mamá",
@@ -58,6 +60,26 @@ class TimelineService:
             },
         ]
 
+        google_events: list[dict[str, Any]] = []
+        if google_access_token:
+            try:
+                google_events = self.google_client.fetch_events(google_access_token)
+            except Exception:
+                google_events = []
+
+        if google_events:
+            assignment = self._assign_google_events_to_members(google_events)
+            for member in members:
+                member_events = assignment.pop(member["name"], [])
+                if member_events:
+                    member["activities"].extend(member_events)
+            if assignment.get("Google Calendar"):
+                members.append({
+                    "name": "Google Calendar",
+                    "color": "#ffcf5c",
+                    "activities": assignment["Google Calendar"],
+                })
+
         normalized_members = []
         for member in members:
             normalized_activities = [self.normalizer.normalize(activity) for activity in member["activities"]]
@@ -79,3 +101,35 @@ class TimelineService:
             })
 
         return {"members": normalized_members}
+
+    def _assign_google_events_to_members(self, events: list[dict[str, Any]]) -> dict[str, list[dict[str, Any]]]:
+        assignment = {
+            "Mamá": [],
+            "Papá": [],
+            "Lucía": [],
+            "Leo": [],
+            "Google Calendar": [],
+        }
+        keywords = {
+            "Mamá": ["mamá", "mama", "mamá"],
+            "Papá": ["papá", "papa", "papá"],
+            "Lucía": ["lucía", "lucia"],
+            "Leo": ["leo"],
+        }
+
+        for event in events:
+            text = " ".join(
+                str(event.get(field, "")).lower() for field in ["summary", "description", "location"]
+            )
+            target = None
+            for member, terms in keywords.items():
+                if any(term in text for term in terms):
+                    target = member
+                    break
+
+            if target:
+                assignment[target].append(event)
+            else:
+                assignment["Google Calendar"].append(event)
+
+        return assignment
