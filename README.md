@@ -10,6 +10,15 @@ Family Timer es una propuesta de producto para ayudar a las familias a entender 
 - Un sistema mínimo de Docker Compose para correr el frontend y el backend en local.
 - Un backlog y estado de trabajo documentados en docs/product/todo.md.
 
+## Enfoque actual del producto
+
+- Priorizar la integración con Google Calendar para mostrar eventos reales.
+- Normalizar eventos a categorías visuales simples y consistentes.
+- Mostrar una timeline diaria por miembro con la actividad actual destacada.
+- Añadir interacción básica para marcar tareas como "en curso" o "terminadas".
+- Incorporar personalización inicial de colores, iconos y reglas desde el modo padres.
+- Mantener un modo infantil sencillo y enfocado en el siguiente paso.
+
 ## Estructura del repositorio
 
 - docs/product: alcance, flujos y wireframes.

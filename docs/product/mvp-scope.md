@@ -9,18 +9,19 @@ Muchas familias necesitan una forma visual y sencilla de entender el día de cad
 Crear una experiencia visual que:
 
 - muestre una timeline diaria por persona,
-- marque el momento actual con una línea móvil,
-- traduzca tareas a iconos claros para niños pequeños,
+- marque la actividad actual y el siguiente paso,
+- traduzca eventos a bloques de actividad claros y comprensibles,
+- permita acciones básicas como marcar tareas como "en curso" o "terminadas",
 - ofrezca una vista simple para niños y una vista de configuración para padres.
 
 ## Funcionalidades prioritarias
 
 1. Sincronización básica con Google Calendar.
-2. Mapeo de eventos a categorías visuales.
-3. Timeline diaria por miembro.
-4. Línea de "ahora" animada.
-5. Vista infantil a pantalla completa.
-6. Vista padres con edición de categorías e iconos.
+2. Normalización de eventos a categorías visuales.
+3. Timeline diaria por miembro con la actividad actual destacada.
+4. Línea de "ahora" y visualización del tiempo libre entre bloques.
+5. Controles básicos para marcar estado de la actividad.
+6. Personalización inicial de colores e iconos por categoría o miembro.
 
 ## Fuera de alcance para el MVP
 

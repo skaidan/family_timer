@@ -25,8 +25,9 @@ La propuesta no se centra en "organizar eventos", sino en hacer que el tiempo se
 
 - configuración de categorías,
 - asignación de iconos y colores,
-- sincronización con Google Calendar,
-- edición de reglas de traducción de eventos.
+- sincronización básica con Google Calendar,
+- edición de reglas de traducción de eventos,
+- control de estado de la actividad (en curso, terminada).
 
 ### Modo niños
 
@@ -37,11 +38,11 @@ La propuesta no se centra en "organizar eventos", sino en hacer que el tiempo se
 
 ## MVP inicial
 
-1. Timeline diaria por persona.
-2. Línea de "ahora" animada.
-3. Traducción visual de eventos a categorías simples.
-4. Vista infantil simplificada.
-5. Vista padres para ajustar colores, iconos y reglas.
+1. Conectar con Google Calendar para importar eventos familiares.
+2. Normalizar eventos a categorías visuales simples.
+3. Timeline diaria por persona con la actividad actual destacada.
+4. Controles básicos para marcar una actividad como "en curso" o "terminada".
+5. Vista padres para ajustar colores, iconos y reglas, más una vista infantil simplificada.
 
 ## Valor del producto
 
