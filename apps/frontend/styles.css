@@ -161,6 +161,11 @@ select.pill-button {
   opacity: 0.95;
 }
 
+.segment.google-event {
+  border-color: rgba(255, 255, 255, 0.85);
+  box-shadow: 0 8px 24px rgba(255, 207, 92, 0.35);
+}
+
 .segment .icon {
   font-size: 1.2rem;
 }

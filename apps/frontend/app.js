@@ -205,6 +205,9 @@ async function renderRows() {
       if (activity.end <= now) segment.classList.add('past');
       else if (activity.start <= now && now < activity.end) segment.classList.add('current');
       else segment.classList.add('future');
+      if (activity.source === 'google_calendar') {
+        segment.classList.add('google-event');
+      }
       segment.style.left = `${left}%`;
       segment.style.width = `${Math.max(width, 8)}%`;
       segment.style.background = `linear-gradient(135deg, ${member.color}, ${member.color}cc)`;

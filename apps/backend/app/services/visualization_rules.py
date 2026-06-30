@@ -21,8 +21,11 @@ class VisualizationRules:
         "custom": {"label": "Actividad", "icon": "📌", "type": "custom"},
     }
 
-    def get_member_style(self, member_name: str) -> dict[str, Any]:
-        return self.MEMBER_STYLES.get(member_name, {"color": "#7c8cff", "icon": "👤"})
+    def get_member_style(self, member_name: str, default_color: str = "#7c8cff", default_icon: str = "👤") -> dict[str, Any]:
+        style = self.MEMBER_STYLES.get(member_name)
+        if style:
+            return style
+        return {"color": default_color, "icon": default_icon}
 
     def get_activity_style(self, activity_type: str) -> dict[str, Any]:
         return self.ACTIVITY_STYLES.get(activity_type, self.ACTIVITY_STYLES["custom"])

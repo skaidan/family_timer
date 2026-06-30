@@ -83,7 +83,11 @@ class TimelineService:
         normalized_members = []
         for member in members:
             normalized_activities = [self.normalizer.normalize(activity) for activity in member["activities"]]
-            member_style = self.visualization_rules.get_member_style(member["name"])
+            member_style = self.visualization_rules.get_member_style(
+                member["name"],
+                default_color=member.get("color", "#7c8cff"),
+                default_icon=member.get("icon", "👤"),
+            )
             for activity in normalized_activities:
                 activity_type = activity.get("type", "custom")
                 style = self.visualization_rules.get_activity_style(activity_type)
@@ -102,6 +106,13 @@ class TimelineService:
 
         return {"members": normalized_members}
 
+    def _normalize_text(self, value: str) -> str:
+        translation = str.maketrans(
+            "áéíóúüñÀÁÉÍÓÚÜÑ",
+            "aeiouunAEIOUUN",
+        )
+        return value.lower().translate(translation)
+
     def _assign_google_events_to_members(self, events: list[dict[str, Any]]) -> dict[str, list[dict[str, Any]]]:
         assignment = {
             "Mamá": [],
@@ -118,12 +129,15 @@ class TimelineService:
         }
 
         for event in events:
-            text = " ".join(
-                str(event.get(field, "")).lower() for field in ["summary", "description", "location"]
+            text = self._normalize_text(
+                " ".join(
+                    str(event.get(field, "")) for field in ["summary", "description", "location"]
+                )
             )
             target = None
             for member, terms in keywords.items():
-                if any(term in text for term in terms):
+                normalized_terms = [self._normalize_text(term) for term in terms]
+                if any(term in text for term in normalized_terms):
                     target = member
                     break
 

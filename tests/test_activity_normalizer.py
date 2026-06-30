@@ -32,3 +32,11 @@ def test_normalizes_type_priority_over_summary(normalizer):
     assert result["label"] == "Trabajo"
     assert result["icon"] == "💼"
     assert result["type"] == "work"
+
+
+def test_normalizes_spanish_summary_substring(normalizer):
+    result = normalizer.normalize({"summary": "Reunión de trabajo", "start": 14.0, "end": 15.0})
+
+    assert result["label"] == "Trabajo"
+    assert result["icon"] == "💼"
+    assert result["type"] == "work"
