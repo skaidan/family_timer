@@ -34,18 +34,22 @@ def test_get_auth_url_includes_required_query_parameters(monkeypatch):
     assert 'scope=https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fcalendar.readonly' in auth_url
 
 
-def test_parse_time_datetime():
+def test_parse_event_time_datetime():
     client = GoogleCalendarClient()
-    result = client._parse_time({'dateTime': '2026-06-30T09:30:00Z'})
+    result = client._parse_event_time({'dateTime': '2026-06-30T09:30:00Z'})
 
-    assert result == 9.5
+    assert result.hour == 9
+    assert result.minute == 30
+    assert result.tzinfo is not None
 
 
-def test_parse_time_date_only():
+def test_parse_event_time_date_only():
     client = GoogleCalendarClient()
-    result = client._parse_time({'date': '2026-06-30'})
+    result = client._parse_event_time({'date': '2026-06-30'})
 
-    assert result == 0
+    assert result.year == 2026
+    assert result.month == 6
+    assert result.day == 30
 
 
 def test_parse_event_daily_all_day():
@@ -59,8 +63,8 @@ def test_parse_event_daily_all_day():
     parsed = client._parse_event(event)
 
     assert parsed is not None
-    assert parsed['start'] == 0
-    assert parsed['end'] == 24.0
+    assert parsed['start_dt'].date().isoformat() == '2026-06-30'
+    assert parsed['end_dt'].date().isoformat() == '2026-07-01'
     assert parsed['label'] == 'Fiesta'
     assert parsed['source'] == 'google_calendar'
 

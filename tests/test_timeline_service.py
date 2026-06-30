@@ -1,6 +1,6 @@
+import datetime
 import pytest
 
-from apps.backend.app.api.v1.timeline import router
 from apps.backend.app.services.timeline_service import TimelineService
 
 
@@ -8,8 +8,18 @@ class DummyCalendarClient:
     def fetch_events(self, access_token: str):
         if access_token == "valid_token":
             return [
-                {"summary": "Cole Lucía", "start": 8.0, "end": 10.0, "description": "Clase de Lucía"},
-                {"summary": "Trabajo Papá", "start": 9.0, "end": 11.0, "description": "Reunión importante"},
+                {
+                    "summary": "Cole Lucía",
+                    "start_dt": datetime.datetime(2026, 7, 1, 8, 0, tzinfo=datetime.timezone.utc),
+                    "end_dt": datetime.datetime(2026, 7, 1, 10, 0, tzinfo=datetime.timezone.utc),
+                    "description": "Clase de Lucía",
+                },
+                {
+                    "summary": "Trabajo Papá",
+                    "start_dt": datetime.datetime(2026, 7, 1, 9, 0, tzinfo=datetime.timezone.utc),
+                    "end_dt": datetime.datetime(2026, 7, 1, 11, 0, tzinfo=datetime.timezone.utc),
+                    "description": "Reunión importante",
+                },
             ]
         raise ValueError("Token inválido")
 
@@ -57,7 +67,12 @@ class UngroupedDummyCalendarClient(DummyCalendarClient):
     def fetch_events(self, access_token: str):
         if access_token == "valid_token":
             return [
-                {"summary": "Evento general", "start": 8.0, "end": 9.0, "description": "Sin asignar"},
+                {
+                    "summary": "Evento general",
+                    "start_dt": datetime.datetime(2026, 7, 1, 8, 0, tzinfo=datetime.timezone.utc),
+                    "end_dt": datetime.datetime(2026, 7, 1, 9, 0, tzinfo=datetime.timezone.utc),
+                    "description": "Sin asignar",
+                },
             ]
         raise ValueError("Token inválido")
 
@@ -71,3 +86,42 @@ def test_build_timeline_with_ungrouped_google_event(monkeypatch):
 
     assert google_member is not None
     assert any(activity["label"] == "Actividad" for activity in google_member["activities"])
+
+
+def test_build_timeline_with_all_day_google_event(monkeypatch):
+    service = TimelineService()
+    monkeypatch.setattr(
+        service,
+        "google_client",
+        DummyCalendarClient(),
+    )
+
+    service.google_client.fetch_events = lambda access_token: [
+        {
+            "summary": "Todo el día Lucía",
+            "start_dt": datetime.datetime(2026, 7, 1, 0, 0, tzinfo=datetime.timezone.utc),
+            "end_dt": datetime.datetime(2026, 7, 2, 0, 0, tzinfo=datetime.timezone.utc),
+            "description": "Día completo",
+        }
+    ]
+
+    timeline = service.build_timeline_by_member("valid_token")
+    lucia = next(member for member in timeline["members"] if member["name"] == "Lucía")
+
+    assert any(activity["start"] == 0.0 and activity["end"] == 24.0 for activity in lucia["activities"])
+
+
+def test_build_timeline_ignores_invalid_google_event_payload(monkeypatch):
+    service = TimelineService()
+    monkeypatch.setattr(
+        service,
+        "google_client",
+        DummyCalendarClient(),
+    )
+
+    service.google_client.fetch_events = lambda access_token: [
+        {"summary": "Sin tiempo"},
+    ]
+
+    timeline = service.build_timeline_by_member("valid_token")
+    assert all("start" in activity and activity["start"] is not None for member in timeline["members"] for activity in member["activities"])

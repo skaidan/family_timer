@@ -35,5 +35,8 @@ def exchange_token(code: str = Body(..., embed=True)) -> dict[str, object]:
 @router.get("/events")
 def get_events(access_token: str = Query(...)) -> dict[str, object]:
     client = GoogleCalendarClient()
-    events = client.fetch_events(access_token)
+    try:
+        events = client.fetch_events(access_token)
+    except Exception as exc:
+        raise HTTPException(status_code=502, detail=str(exc))
     return {"events": events}

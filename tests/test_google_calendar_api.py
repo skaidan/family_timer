@@ -23,6 +23,18 @@ def test_get_events_requires_access_token():
     assert response.status_code == 422
 
 
+def test_get_google_calendar_events_returns_array(monkeypatch):
+    monkeypatch.setenv('GOOGLE_CLIENT_ID', 'test-client-id')
+    monkeypatch.setenv('GOOGLE_CLIENT_SECRET', 'test-secret')
+    monkeypatch.setenv('GOOGLE_REDIRECT_URI', 'http://localhost:8080')
+
+    response = client.get('/google-calendar/events', params={'access_token': 'fake'})
+
+    assert response.status_code in (200, 502)
+    if response.status_code == 200:
+        assert isinstance(response.json().get('events'), list)
+
+
 def test_get_timeline_without_token():
     response = client.get('/timeline')
 

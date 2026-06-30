@@ -2,16 +2,25 @@ from typing import Any
 
 from ..integrations.google_calendar import GoogleCalendarClient
 from .activity_normalizer import ActivityNormalizer
+from .google_event_assigner import GoogleEventAssigner
 from .visualization_rules import VisualizationRules
 
 
 class TimelineService:
-    def __init__(self) -> None:
+    def __init__(
+        self,
+        google_client: GoogleCalendarClient | None = None,
+        assigner: GoogleEventAssigner | None = None,
+    ) -> None:
         self.normalizer = ActivityNormalizer()
         self.visualization_rules = VisualizationRules()
-        self.google_client = GoogleCalendarClient()
+        self.google_client = google_client or GoogleCalendarClient()
+        self.assigner = assigner or GoogleEventAssigner()
 
-    def build_timeline_by_member(self, google_access_token: str | None = None) -> dict[str, Any]:
+    def build_timeline_by_member(
+        self,
+        google_access_token: str | None = None,
+    ) -> dict[str, Any]:
         members = [
             {
                 "name": "Mamá",
@@ -68,21 +77,29 @@ class TimelineService:
                 google_events = []
 
         if google_events:
-            assignment = self._assign_google_events_to_members(google_events)
+            assignment = self.assigner.assign(google_events, members)
             for member in members:
                 member_events = assignment.pop(member["name"], [])
                 if member_events:
                     member["activities"].extend(member_events)
             if assignment.get("Google Calendar"):
-                members.append({
-                    "name": "Google Calendar",
-                    "color": "#ffcf5c",
-                    "activities": assignment["Google Calendar"],
-                })
+                members.append(
+                    {
+                        "name": "Google Calendar",
+                        "color": "#ff6ea8",
+                        "activities": assignment["Google Calendar"],
+                    }
+                )
 
         normalized_members = []
         for member in members:
-            normalized_activities = [self.normalizer.normalize(activity) for activity in member["activities"]]
+            normalized_activities = [
+                activity
+                for activity in (
+                    self.normalizer.normalize(activity) for activity in member["activities"]
+                )
+                if activity.get("start") is not None and activity.get("end") is not None
+            ]
             member_style = self.visualization_rules.get_member_style(
                 member["name"],
                 default_color=member.get("color", "#7c8cff"),
@@ -105,45 +122,3 @@ class TimelineService:
             })
 
         return {"members": normalized_members}
-
-    def _normalize_text(self, value: str) -> str:
-        translation = str.maketrans(
-            "áéíóúüñÀÁÉÍÓÚÜÑ",
-            "aeiouunAAEIOUUN",
-        )
-        return value.lower().translate(translation)
-
-    def _assign_google_events_to_members(self, events: list[dict[str, Any]]) -> dict[str, list[dict[str, Any]]]:
-        assignment = {
-            "Mamá": [],
-            "Papá": [],
-            "Lucía": [],
-            "Leo": [],
-            "Google Calendar": [],
-        }
-        keywords = {
-            "Mamá": ["mamá", "mama", "mamá"],
-            "Papá": ["papá", "papa", "papá"],
-            "Lucía": ["lucía", "lucia"],
-            "Leo": ["leo"],
-        }
-
-        for event in events:
-            text = self._normalize_text(
-                " ".join(
-                    str(event.get(field, "")) for field in ["summary", "description", "location"]
-                )
-            )
-            target = None
-            for member, terms in keywords.items():
-                normalized_terms = [self._normalize_text(term) for term in terms]
-                if any(term in text for term in normalized_terms):
-                    target = member
-                    break
-
-            if target:
-                assignment[target].append(event)
-            else:
-                assignment["Google Calendar"].append(event)
-
-        return assignment

@@ -1,3 +1,4 @@
+from datetime import datetime, date, time, timedelta
 from typing import Any
 
 
@@ -52,6 +53,11 @@ class ActivityNormalizer:
 
         start = raw_activity.get("start")
         end = raw_activity.get("end")
+        start_dt = raw_activity.get("start_dt")
+        end_dt = raw_activity.get("end_dt")
+
+        if start is None or end is None:
+            start, end = self._normalize_datetime_range(start_dt, end_dt)
 
         return {
             "label": category["label"],
@@ -61,3 +67,31 @@ class ActivityNormalizer:
             "end": end,
             "source": raw_activity.get("source", "manual"),
         }
+
+    def _normalize_datetime_range(
+        self,
+        start_dt: datetime | None,
+        end_dt: datetime | None,
+    ) -> tuple[float | None, float | None]:
+        if not isinstance(start_dt, datetime) or not isinstance(end_dt, datetime):
+            return None, None
+
+        if start_dt.date() == end_dt.date():
+            return self._to_hour(start_dt), self._to_hour(end_dt)
+
+        # All-day events with a midnight end next day should map to full day
+        if (
+            start_dt.time() == time(0, 0)
+            and end_dt.time() == time(0, 0)
+            and end_dt.date() == start_dt.date() + timedelta(days=1)
+        ):
+            return 0.0, 24.0
+
+        return None, None
+
+    def _to_hour(self, value: datetime | date | None) -> float | None:
+        if isinstance(value, datetime):
+            return value.hour + value.minute / 60 + value.second / 3600
+        if isinstance(value, date):
+            return 0.0
+        return None
