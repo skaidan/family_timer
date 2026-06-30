@@ -54,7 +54,21 @@ const timeRemaining = document.getElementById('time-remaining');
 const googleAuthButton = document.getElementById('google-auth-button');
 const googleSyncStatus = document.getElementById('google-sync-status');
 
-const backendBase = `${window.location.protocol}//${window.location.hostname}:8001`;
+function getBackendBase() {
+  const origin = window.location.origin;
+
+  if (origin.includes('-8080.app.github.dev')) {
+    return origin.replace('-8080.app.github.dev', '-8001.app.github.dev');
+  }
+
+  if (origin.includes('://localhost:8080') || origin.includes('://127.0.0.1:8080')) {
+    return origin.replace(':8080', ':8001');
+  }
+
+  return origin.replace(/:8080$/, ':8001');
+}
+
+const backendBase = getBackendBase();
 const googleApiBase = `${backendBase}/google-calendar`;
 let googleAccessToken = localStorage.getItem('family_timer_google_token');
 
