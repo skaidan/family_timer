@@ -33,6 +33,8 @@ class ActivityNormalizer:
         "reunión": {"label": "Reunión", "icon": "📞", "type": "work"},
         "siesta": {"label": "Siesta", "icon": "😴", "type": "sleep"},
         "parque": {"label": "Parque", "icon": "🌳", "type": "play"},
+        "restaurante": {"label": "Comer", "icon": "🥗", "type": "eat"},
+        "restaurant": {"label": "Comer", "icon": "🥗", "type": "eat"},
     }
 
     def normalize(self, raw_activity: dict[str, Any]) -> dict[str, Any]:
@@ -44,8 +46,14 @@ class ActivityNormalizer:
         if category is None:
             category = self.CATEGORY_MAP.get(summary)
         if category is None:
-            for term, value in self.CATEGORY_MAP.items():
-                if term in summary:
+            search_text = " ".join(
+                str(raw_activity.get(field, "")).strip().lower()
+                for field in ("summary", "description", "location")
+            )
+            for term, value in sorted(
+                self.CATEGORY_MAP.items(), key=lambda item: len(item[0]), reverse=True
+            ):
+                if term in search_text:
                     category = value
                     break
         if category is None:

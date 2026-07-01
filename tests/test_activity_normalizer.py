@@ -40,3 +40,32 @@ def test_normalizes_spanish_summary_substring(normalizer):
     assert result["label"] == "Trabajo"
     assert result["icon"] == "💼"
     assert result["type"] == "work"
+
+
+def test_normalizes_using_description_when_summary_is_generic(normalizer):
+    result = normalizer.normalize(
+        {
+            "summary": "Evento",
+            "description": "Clase de yoga en el parque",
+            "start": 9.0,
+            "end": 10.0,
+        }
+    )
+
+    assert result["label"] == "Parque" or result["label"] == "Actividad"
+    assert result["type"] in {"play", "custom"}
+
+
+def test_normalizes_using_location_when_summary_is_generic(normalizer):
+    result = normalizer.normalize(
+        {
+            "summary": "Evento",
+            "location": "Restaurante",
+            "start": 12.0,
+            "end": 13.0,
+        }
+    )
+
+    assert result["label"] == "Comer"
+    assert result["icon"] == "🥗"
+    assert result["type"] == "eat"

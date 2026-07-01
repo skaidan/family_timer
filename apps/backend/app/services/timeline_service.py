@@ -100,6 +100,7 @@ class TimelineService:
                 )
                 if activity.get("start") is not None and activity.get("end") is not None
             ]
+            normalized_activities.sort(key=lambda activity: (activity["start"], activity["end"]))
             member_style = self.visualization_rules.get_member_style(
                 member["name"],
                 default_color=member.get("color", "#7c8cff"),
