@@ -153,10 +153,6 @@
         <div class="brand-mark" aria-hidden="true">
           <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-label="Logo timeline"><rect x="3" y="5" width="18" height="14" rx="3"></rect><path d="M8 3v4M16 3v4M3 10h18"></path><path d="M8 14h2M12 14h4"></path></svg>
         </div>
-        <div class="brand-copy">
-          <h1>Day Planner Timeline</h1>
-          <p>Proyecto estático para GitHub Pages con datos editables en JSON, barras horizontales por hora y línea vertical para la hora actual.</p>
-        </div>
       </div>
       <div class="toolbar" aria-label="Acciones">
         <input id="date-input" class="control" type="date" aria-label="Seleccionar día" />
@@ -187,53 +183,7 @@
           </div>
         </div>
       </section>
-      <aside class="panel" aria-labelledby="details-title">
-        <div class="panel-header">
-          <div>
-            <h2 id="details-title">Config y datos</h2>
-            <p>La interfaz lee un único fichero JSON para definir horas, colores, emojis y tareas.</p>
-          </div>
-        </div>
-        <div class="details">
-          <section class="detail-card" aria-labelledby="stats-title">
-            <h3 id="stats-title">Resumen</h3>
-            <div class="stats-grid">
-              <div class="stat-box"><span>Tareas</span><strong id="stat-tasks">0</strong></div>
-              <div class="stat-box"><span>Calendarios</span><strong id="stat-calendars">0</strong></div>
-              <div class="stat-box"><span>Horas visibles</span><strong id="stat-hours">0</strong></div>
-              <div class="stat-box"><span>Bloque</span><strong id="stat-slot">0 min</strong></div>
-            </div>
-          </section>
-          <section class="detail-card" aria-labelledby="legend-title">
-            <h3 id="legend-title">Calendarios</h3>
-            <div id="legend-list" class="legend-list"></div>
-          </section>
-          <section class="detail-card" aria-labelledby="json-title">
-            <h3 id="json-title">Ruta del JSON</h3>
-            <p><code>./data/calendars.json</code></p>
-          </section>
-          <section class="detail-card" aria-labelledby="schema-title">
-            <h3 id="schema-title">Esquema básico</h3>
-            <pre class="code-block">{
-  "dayStart": "08:00",
-  "dayEnd": "22:00",
-  "slotMinutes": 30,
-  "days": {
-    "2026-08-27": [
-      {
-        "calendarId": "trabajo",
-        "title": "Deploy",
-        "emoji": "🚀",
-        "start": "10:00",
-        "end": "11:30",
-        "rowColor": "#d8f3f0"
-      }
-    ]
-  }
-}</pre>
-          </section>
-        </div>
-      </aside>
+      
     </main>
   </div>
   <script>
