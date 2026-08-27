@@ -93,7 +93,7 @@
     .control, .button { min-height: 44px; border-radius: var(--radius-full); border: 1px solid color-mix(in oklab, var(--color-text) 10%, transparent); background: var(--color-surface); color: var(--color-text); padding: 0 var(--space-4); box-shadow: var(--shadow-sm); }
     .button { display: inline-flex; align-items: center; gap: var(--space-2); font-size: var(--text-sm); font-weight: 600; }
     .button:hover, .control:hover { border-color: color-mix(in oklab, var(--color-primary) 35%, var(--color-border)); }
-    .layout { display: grid; grid-template-columns: minmax(0, 1.8fr) minmax(280px, 0.9fr); gap: var(--space-5); align-items: start; }
+    .layout { display: grid; grid-template-columns: 1fr; gap: var(--space-5); align-items: start; }
     .panel { background: color-mix(in oklab, var(--color-surface) 88%, transparent); border: 1px solid color-mix(in oklab, var(--color-text) 10%, transparent); border-radius: var(--radius-xl); box-shadow: var(--shadow-md); min-width: 0; }
     .panel-header { padding: var(--space-5); border-bottom: 1px solid var(--color-divider); display: flex; justify-content: space-between; gap: var(--space-4); align-items: start; }
     .panel-header h2 { margin: 0; font-size: var(--text-lg); line-height: 1.1; letter-spacing: -0.02em; }
@@ -124,7 +124,7 @@
     .task-title { display: flex; align-items: center; gap: 0.45rem; min-width: 0; font-size: var(--text-sm); font-weight: 700; line-height: 1.15; letter-spacing: -0.01em; }
     .task-title span:last-child { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
     .task-meta { color: color-mix(in oklab, var(--color-text) 72%, transparent); font-size: var(--text-xs); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-    .details { padding: var(--space-5); display: grid; gap: var(--space-5); }
+    .details { display: none; }
     .detail-card { border-radius: var(--radius-lg); background: var(--color-surface-offset); border: 1px solid color-mix(in oklab, var(--color-text) 8%, transparent); padding: var(--space-4); }
     .detail-card h3 { margin: 0 0 var(--space-2); font-size: var(--text-sm); text-transform: uppercase; letter-spacing: 0.08em; color: var(--color-text-muted); }
     .detail-card p, .detail-card li, .detail-card pre { margin: 0; color: var(--color-text); font-size: var(--text-sm); }
@@ -188,53 +188,6 @@
           </div>
         </div>
       </section>
-      <aside class="panel" aria-labelledby="details-title">
-        <div class="panel-header">
-          <div>
-            <h2 id="details-title">Config y datos</h2>
-            <p>La interfaz lee un único fichero JSON para definir horas, colores, emojis y tareas.</p>
-          </div>
-        </div>
-        <div class="details">
-          <section class="detail-card" aria-labelledby="stats-title">
-            <h3 id="stats-title">Resumen</h3>
-            <div class="stats-grid">
-              <div class="stat-box"><span>Tareas</span><strong id="stat-tasks">0</strong></div>
-              <div class="stat-box"><span>Calendarios</span><strong id="stat-calendars">0</strong></div>
-              <div class="stat-box"><span>Horas visibles</span><strong id="stat-hours">0</strong></div>
-              <div class="stat-box"><span>Bloque</span><strong id="stat-slot">0 min</strong></div>
-            </div>
-          </section>
-          <section class="detail-card" aria-labelledby="legend-title">
-            <h3 id="legend-title">Calendarios</h3>
-            <div id="legend-list" class="legend-list"></div>
-          </section>
-          <section class="detail-card" aria-labelledby="json-title">
-            <h3 id="json-title">Ruta del JSON</h3>
-            <p><code>./data/calendars.json</code></p>
-          </section>
-          <section class="detail-card" aria-labelledby="schema-title">
-            <h3 id="schema-title">Esquema básico</h3>
-            <pre class="code-block">{
-  "dayStart": "08:00",
-  "dayEnd": "22:00",
-  "slotMinutes": 30,
-  "days": {
-    "2026-08-27": [
-      {
-        "calendarId": "trabajo",
-        "title": "Deploy",
-        "emoji": "🚀",
-        "start": "10:00",
-        "end": "11:30",
-        "rowColor": "#d8f3f0"
-      }
-    ]
-  }
-}</pre>
-          </section>
-        </div>
-      </aside>
     </main>
   </div>
   <script>
