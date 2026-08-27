@@ -1,10 +1,10 @@
 {
   "defaultDate": "2026-08-27",
   "dayStart": "06:00",
-  "dayEnd": "23:00",
+  "dayEnd": "23:45",
   "slotMinutes": 15,
   "calendars": [
-    {
+    {dw
       "id": "papa",
       "name": "Papá",
       "color": "#01696f",
