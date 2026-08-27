@@ -30,14 +30,14 @@
     }
   ],
   "days": {
-    "2026-08-28": [
+    "2026-08-27": [
       {"id":"t1","calendarId":"papa","title":"Trabajar","emoji":"🧠","start":"07:30","end":"14:30","rowColor":"#d7efec","note":"Diseño de arquitecturas"},
       {"id":"t2","calendarId":"mama","title":"Code review","emoji":"🔍","start":"11:00","end":"12:00","rowColor":"#dff2ef","note":"PRs críticos"},
       {"id":"t3","calendarId":"hija","title":"Comida","emoji":"🍽️","start":"14:00","end":"15:00","rowColor":"#ebe2f8","note":"Descanso"},
       {"id":"t4","calendarId":"hijo","title":"Deploy release","emoji":"🚀","start":"16:00","end":"17:30","rowColor":"#d1ece8","note":"Ventana de publicación"},
       {"id":"t5","calendarId":"hijo","title":"Entrenamiento","emoji":"🤾","start":"19:00","end":"20:30","rowColor":"#dfead7","note":"Balonmano"}
     ],
-    "2026-08-29": [
+    "2026-08-28": [
       {"id":"t6","calendarId":"papa","title":"Daily team sync","emoji":"🗓️","start":"09:30","end":"10:00","rowColor":"#dff2ef"},
       {"id":"t7","calendarId":"mama","title":"Pair debugging","emoji":"🐞","start":"10:30","end":"12:30","rowColor":"#d6eeea"},
       {"id":"t8","calendarId":"hija","title":"Compras","emoji":"🛒","start":"18:00","end":"18:45","rowColor":"#efe8fb"},
