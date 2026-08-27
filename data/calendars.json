@@ -1,18 +1,18 @@
 {
   "defaultDate": "2026-08-27",
-  "dayStart": "08:00",
+  "dayStart": "06:00",
   "dayEnd": "22:00",
-  "slotMinutes": 30,
+  "slotMinutes": 15,
   "calendars": [
     {
       "id": "trabajo",
-      "name": "Trabajo",
+      "name": "Papá",
       "color": "#01696f",
-      "description": "Bloques profesionales y desarrollo"
+      "description": "Gruñe que te gruñe"
     },
     {
       "id": "personal",
-      "name": "Personal",
+      "name": "Mamá",
       "color": "#7a39bb",
       "description": "Rutina, recados y vida diaria"
     },
