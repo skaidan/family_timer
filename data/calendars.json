@@ -4,7 +4,7 @@
   "dayEnd": "23:45",
   "slotMinutes": 15,
   "calendars": [
-    {dw
+    {
       "id": "papa",
       "name": "Papá",
       "color": "#01696f",
